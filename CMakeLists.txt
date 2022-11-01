@@ -13,9 +13,11 @@ aux_source_directory(${PROJECT_SOURCE_DIR} ATEST_SOURCES)
 
 add_executable(float_load nload_test.cpp)
 add_executable(fft_test fft_test.cpp)
+add_executable(gcolor color_matrix.cpp)
 
 target_link_libraries(float_load ${EXTRA_LIBS})
 target_link_libraries(fft_test ${EXTRA_LIBS} fftw3)
+target_link_libraries(gcolor ${EXTRA_LIBS})
 
 add_test(NAME fload COMMAND float_load)
 add_test(NAME fft COMMAND fft_test)
