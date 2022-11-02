@@ -32,6 +32,7 @@ int main (int argc, char* argv[])
     int fd;
     int N = 2000; //50ms //800;//8000;       //Number of samples
     int Freq = 40000; //8000;    //Frequency
+    int freq_interval = 20; // 1000/150
     double *in;
     fftw_complex *out;
     fftw_plan my_plan;
@@ -71,10 +72,18 @@ int main (int argc, char* argv[])
                 my_plan = fftw_plan_dft_r2c_1d(N, in, out, FFTW_ESTIMATE);
                 fftw_execute(my_plan);
 
-                for(int i =0; i<N/2; i++){
-                    double res = 70+10*log10(out[i][0]*out[i][0]+out[i][1]*out[i][1]);
-                    printf("%d,%4.2f,%d\n", freq_sp*i, res, (int)(res/10));
+                double res = 0.0;
+                int i_start = 0;
+                int i;
+                for(i=0; i<N/2; i++){
+                    res += 70+10*log10(out[i][0]*out[i][0]+out[i][1]*out[i][1]);
+                    if(i>0 && (i%freq_interval)==0){
+                        printf("%d, [%d - %d], %4.2f\n", i/freq_interval, freq_sp*i_start, freq_sp*i, res/freq_interval);
+                        res = 0.0;
+                        i_start = i;
+                    }
                 }
+                printf("%d, [%d - %d], %4.2f\n", i/freq_interval, freq_sp*i_start, freq_sp*i, res/freq_interval);
 
                 fftw_destroy_plan(my_plan);
             }
