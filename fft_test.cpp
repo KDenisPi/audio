@@ -22,6 +22,7 @@
 
 #include<fftw3.h>
 #include "load_struct.h"
+#include "colors.h"
 
 using namespace std;
 
@@ -29,8 +30,8 @@ int main (int argc, char* argv[])
 {
     bool success = true, debug = false;
     int fd;
-    int N = 800;//8000;       //Number of samples
-    int Freq = 8000;    //Frequency
+    int N = 2000; //50ms //800;//8000;       //Number of samples
+    int Freq = 40000; //8000;    //Frequency
     double *in;
     fftw_complex *out;
     fftw_plan my_plan;
@@ -43,11 +44,12 @@ int main (int argc, char* argv[])
     out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)*N);
 
     std::chrono::time_point<std::chrono::system_clock> tp_start, tp_end;
-    //std::time_t time_now = std::chrono::system_clock::to_time_t(tp);
+
+    std::cout << "Frequency: " << Freq << " N: " << N << " Freq step: " << freq_sp << std::endl;
 
     fd = open(argv[1], O_RDONLY);
     if(fd>=0){
-        for(int loop=0; loop<40; loop++){
+        for(int loop=0; loop<1; loop++){
             tp_start = std::chrono::system_clock::now();
             for(int i=0; i<N; i++){
                 read_bytes = read(fd, buff.ch, sizeof(buff));
@@ -71,7 +73,7 @@ int main (int argc, char* argv[])
 
                 for(int i =0; i<N/2; i++){
                     double res = 70+10*log10(out[i][0]*out[i][0]+out[i][1]*out[i][1]);
-                    //printf("%d,%4.2f\n", freq_sp*i, 70+10*log10(out[i][0]*out[i][0]+out[i][1]*out[i][1]));
+                    printf("%d,%4.2f,%d\n", freq_sp*i, res, (int)(res/10));
                 }
 
                 fftw_destroy_plan(my_plan);

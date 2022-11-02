@@ -19,25 +19,39 @@ int main (int argc, char* argv[])
 {
     int freq_block[3] = {6,8,6};
     int freq_step = 30;
-    int amp_step = 5;
+    uint32_t confs[3][5] = {{0, 16, 8, 0x70, 3}, {8, 0, 16, 0x60, 2}, {16, 8, 0, 0x70, 3}};
 
-    //printf("%06X", (0xff<<(8*1)));
+    //std::cout << "<html>\n   <head>\n    </head>\n    <body>\n        <table>" << std::endl;
 
+    // 20 frequence * 6 for amp
+    std::cout << "#include <stdint.h>\n namespace ldata {\n uint32_t colors[120] = {" << std::endl;
 
+    int idx=0;
     for(int i=0;i<3;i++){
-        uint32_t color = 0xff;
+        uint32_t color = confs[i][3];;
         for(int hz=0;hz<freq_block[i];hz++){
-            printf("<tr>\n");
+            uint32_t a_color_1 = 0x10;
+            uint32_t a_color_2 = 0x50;
+            //printf("<tr>\n");
             for(int amp=0; amp<6; amp++){
-                printf("<td class=\"td\" style=\"background:#%06X\">&nbsp;</td>\n",(color<<(8*i)));
-                //printf("%06X", (color<<(8*i)));
-                color -= amp_step;
+                uint32_t rgb = (color<<confs[i][0]) | (a_color_1<<confs[i][1]) | (a_color_2<<confs[i][2]);
+
+                //printf("<td class=\"td\" style=\"background:#%06X\">&nbsp;</td>\n",rgb);
+                printf("0x%06X%c", rgb, (idx==119 ? ' ' : ','));
+
+                color += confs[i][4];
+                a_color_1 += 2;
+                a_color_2 += 4;
+                idx++;
             }
-            printf("</tr>\n");
-            color -= amp_step;
+            //printf("</tr>\n");
+            printf("\n");
+            color += confs[i][4];
         }
     }
 
+    //std::cout << "</table>\n     </body>\n </html>" << std::endl;
+    std::cout << "\n};\n }" << std::endl;
 
     exit(EXIT_SUCCESS);
 }
