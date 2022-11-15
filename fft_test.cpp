@@ -50,7 +50,7 @@ int main (int argc, char* argv[])
 
     fd = open(argv[1], O_RDONLY);
     if(fd>=0){
-        for(int loop=0; loop<1; loop++){
+        for(int loop=0; loop<4; loop++){
             tp_start = std::chrono::system_clock::now();
             for(int i=0; i<N; i++){
                 read_bytes = read(fd, buff.ch, sizeof(buff));
@@ -76,9 +76,11 @@ int main (int argc, char* argv[])
                 int i_start = 0;
                 int i;
                 for(i=0; i<N/2; i++){
-                    res += 70+10*log10(out[i][0]*out[i][0]+out[i][1]*out[i][1]);
+                    double val = 10*log10(out[i][0]*out[i][0]+out[i][1]*out[i][1]);
+                    printf("%d, [%d], %4.2f, %4.2f, %d\n", i, freq_sp*i, val, val+75, (val+75>0 ? (uint32_t)((val+75)/10) : (uint32_t)0));
+                    res += 70+val;
                     if(i>0 && (i%freq_interval)==0){
-                        printf("%d, [%d - %d], %4.2f\n", i/freq_interval, freq_sp*i_start, freq_sp*i, res/freq_interval);
+                        //printf("%d, [%d - %d], %4.2f\n", i/freq_interval, freq_sp*i_start, freq_sp*i, res/freq_interval);
                         res = 0.0;
                         i_start = i;
                     }
